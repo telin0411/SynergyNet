@@ -1,0 +1,7 @@
+# ninja log v5
+0	3588	1637646090144522944	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.o	ef7030924d00bf5b
+0	10594	1637646097148435145	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.o	cf52da78da30b30e
+0	17567	1637646104116347820	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/vision.o	1ab3b4fd930bbeee
+0	3063	1637646624385875274	/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/cpu/ms_deform_attn_cpu.o	a2e73e5c82a5e51d
+1	10546	1637646631861782753	/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/cuda/ms_deform_attn_cuda.o	58adf2fd42625026
+0	17353	1637646638665698557	/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/vision.o	cac868ef35d185e2

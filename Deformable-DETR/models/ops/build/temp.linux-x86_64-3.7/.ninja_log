@@ -1,0 +1,4 @@
+# ninja log v5
+0	3588	1637646090144522944	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.o	ef7030924d00bf5b
+0	10594	1637646097148435145	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.o	cf52da78da30b30e
+0	17567	1637646104116347820	/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/vision.o	1ab3b4fd930bbeee
