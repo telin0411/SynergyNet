@@ -1,13 +1,14 @@
 import torch
 from torch import nn
-#from .utils import load_state_dict_from_url
+from detr_dummy_args import dummy_args
+from models.deformable_detr import build
 
 
-__all__ = ['MobileNetV2', 'mobilenet_v2']
+__all__ = ['DETRNet', 'detrnet']
 
 
 model_urls = {
-    'mobilenet_v2': 'https://download.pytorch.org/models/mobilenet_v2-b0353104.pth',
+    'detrnet': 'pretrained/r50_deformable_detr-checkpoint.pth',
 }
 
 
@@ -75,7 +76,7 @@ class InvertedResidual(nn.Module):
             return self.conv(x)
 
 
-class MobileNetV2(nn.Module):
+class DETRNet(nn.Module):
     def __init__(self,
                  num_classes=1000,
                  width_mult=1.0,
@@ -94,52 +95,12 @@ class MobileNetV2(nn.Module):
             block: Module specifying inverted residual building block for mobilenet
             norm_layer: Module specifying the normalization layer to use
         """
-        super(MobileNetV2, self).__init__()
+        super(DETRNet, self).__init__()
 
-        if block is None:
-            block = InvertedResidual
+        detr_args = dummy_args()
+        detr_args.device = "cuda:0"
+        self.detr, _, _ = build(detr_args)
 
-        if norm_layer is None:
-            norm_layer = nn.BatchNorm2d
-
-        input_channel = 32
-        last_channel = 1280
-
-        if inverted_residual_setting is None:
-            inverted_residual_setting = [
-                # t, c, n, s
-                [1, 16, 1, 1],
-                [6, 24, 2, 2],
-                [6, 32, 3, 2],
-                [6, 64, 4, 2],
-                [6, 96, 3, 1],
-                [6, 160, 3, 2],
-                [6, 320, 1, 1],
-            ]
-
-        # only check the first element, assuming user knows t,c,n,s are required
-        if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
-            raise ValueError("inverted_residual_setting should be non-empty "
-                             "or a 4-element list, got {}".format(inverted_residual_setting))
-
-        # building first layer
-        input_channel = _make_divisible(input_channel * width_mult, round_nearest)
-        self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)
-        features = [ConvBNReLU(3, input_channel, stride=2, norm_layer=norm_layer)]
-        # building inverted residual blocks
-        for t, c, n, s in inverted_residual_setting:
-            output_channel = _make_divisible(c * width_mult, round_nearest)
-            for i in range(n):
-                stride = s if i == 0 else 1
-                features.append(block(input_channel, output_channel, stride, expand_ratio=t, norm_layer=norm_layer))
-                input_channel = output_channel
-        # building last several layers
-        features.append(ConvBNReLU(input_channel, self.last_channel, kernel_size=1, norm_layer=norm_layer))
-        # make it nn.Sequential
-        self.features = nn.Sequential(*features)
-
-        # building classifier
-        
         self.num_ori = 12
         self.num_shape = 40
         self.num_exp = 10
@@ -148,53 +109,17 @@ class MobileNetV2(nn.Module):
         self.num_scale = 1
         self.num_trans = 3
 
+        # self.last_channel = 256
+        self.detr_proj = nn.Sequential(
+            nn.Linear(256, 1280),
+        )
 
+        self.last_channel = 1280
 
         self.classifier_ori = nn.Sequential(
             nn.Dropout(0.2),
             nn.Linear(self.last_channel, self.num_ori),
         )
-        # self.classifier_yaw = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_bin),
-        # )
-        # self.classifier_pitch = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_bin),
-        # )
-        # self.classifier_roll = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_bin),
-        # )
-        # self.classifier_scale = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_scale),
-        # )
-        # self.classifier_trans = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_trans),
-        # )
-
-        # GeoNet
-        # self.geoNet = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Conv1d(self.last_channel, self.last_channel//2, 1, 1, 0, bias=True),
-        #     nn.Conv1d(self.last_channel//2, self.last_channel//4, 1, 1, 0, bias=True),
-        #     nn.ReLU6(inplace=True),
-        # )
-
-        # self.classifier_shape = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel//4, self.num_shape),
-        # )
-        # self.classifier_exp = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel//4, self.num_exp),
-        # )
-        # self.classifier_texture = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_texture),
-        # )
 
         self.classifier_shape = nn.Sequential(
             nn.Dropout(0.2),
@@ -204,10 +129,6 @@ class MobileNetV2(nn.Module):
             nn.Dropout(0.2),
             nn.Linear(self.last_channel, self.num_exp),
         )
-        # self.classifier_texture = nn.Sequential(
-        #     nn.Dropout(0.2),
-        #     nn.Linear(self.last_channel, self.num_texture),
-        # )
 
         # weight initialization
         for m in self.modules():
@@ -226,11 +147,14 @@ class MobileNetV2(nn.Module):
         # This exists since TorchScript doesn't support inheritance, so the superclass method
         # (this one) needs to have a name other than `forward` that can be accessed in a subclass
 
-        x = self.features(x)
+        # x = self.features(x)
+        x = self.detr(x)
+        x = x["hs"][0, :, 0, :]
+        x = self.detr_proj(x)
         # Cannot use "squeeze" as batch-size can be 1 => must use reshape with x.shape[0]
 
-        x = nn.functional.adaptive_avg_pool2d(x, 1)
-        x = x.reshape(x.shape[0], -1)
+        # x = nn.functional.adaptive_avg_pool2d(x, 1)
+        # x = x.reshape(x.shape[0], -1)
 
         pool_x = x.clone()
 
@@ -263,17 +187,19 @@ class MobileNetV2(nn.Module):
         return self._forward_impl(x)
 
 
-def mobilenet_v2(pretrained=False, progress=True, **kwargs):
+def detrnet(pretrained=False, progress=True, **kwargs):
     """
-    Constructs a MobileNetV2 architecture from
+    Constructs a architecture from
     `"MobileNetV2: Inverted Residuals and Linear Bottlenecks" <https://arxiv.org/abs/1801.04381>`_.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    model = MobileNetV2(**kwargs)
-    if pretrained:
-        state_dict = load_state_dict_from_url(model_urls['mobilenet_v2'],
-                                              progress=progress)
-        model.load_state_dict(state_dict)
+    model = DETRNet(**kwargs)
+    checkpoint = torch.load(model_urls["detrnet"], map_location='cpu')
+    model.detr.load_state_dict(checkpoint['model'], strict=True)
+    # if pretrained:
+    #     state_dict = load_state_dict_from_url(model_urls['mobilenet_v2'],
+    #                                           progress=progress)
+    #     model.load_state_dict(state_dict)
     return model

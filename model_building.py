@@ -8,7 +8,7 @@ import scipy.io as sio
 from utils.params import ParamsPack
 param_pack = ParamsPack()
 
-from backbone_nets import mobilenetv2_backbone
+from backbone_nets import mobilenetv2_backbone, detr_backbone
 from backbone_nets.pointnet_backbone import MLP_for, MLP_rev
 from loss_definition import ParamLoss, WingLoss
 
@@ -23,6 +23,7 @@ class I2P(nn.Module):
         self.backbone = getattr(mobilenetv2_backbone, args.arch)()
 
         # TODO: DETR
+        """
         from detr_dummy_args import dummy_args
         from models.deformable_detr import build
 
@@ -30,19 +31,25 @@ class I2P(nn.Module):
         args.device = "cuda:0"
         model, _, _ = build(args)
         checkpoint = torch.load("pretrained/r50_deformable_detr-checkpoint.pth", map_location='cpu')
-        model.load_state_dict(checkpoint['model'], strict=True)
-        print(model);raise
-
+        new_state_dict = checkpoint['model']
+        # new_state_dict = {"{}.{}".format("module.I2P.detr_model", k):
+        #     state_dict[k] for k in state_dict}
+        model.load_state_dict(new_state_dict, strict=True)
+        self.detr_model = model
+        """
+        detr_model = getattr(detr_backbone, "detrnet")()
+        self.backbone = detr_model
+        # print(self.detr_model);raise
 
     def forward(self,input, target):
         """Training time forward"""
         _3D_attr, avgpool = self.backbone(input)
-        _3D_attr_GT = target.type(torch.cuda.FloatTensor)
-        return _3D_attr, _3D_attr_GT, avgpool
 
     def forward_test(self, input):
         """ Testing time forward."""
+        print(input.size())
         _3D_attr, avgpool = self.backbone(input)
+        print(_3D_attr.size(), avgpool.size());raise
         return _3D_attr, avgpool
 
 # Main model SynergyNet definition

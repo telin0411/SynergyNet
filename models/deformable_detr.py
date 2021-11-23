@@ -155,6 +155,15 @@ class DeformableDETR(nn.Module):
         if not self.two_stage:
             query_embeds = self.query_embed.weight
         hs, init_reference, inter_references, enc_outputs_class, enc_outputs_coord_unact = self.transformer(srcs, masks, pos, query_embeds)
+        
+        """
+        print(hs.size())
+        print(init_reference.size())
+        print(inter_references.size())
+        print(enc_outputs_class.size())
+        print(enc_outputs_coord_unact.size())
+        raise
+        """
 
         outputs_classes = []
         outputs_coords = []
@@ -178,6 +187,7 @@ class DeformableDETR(nn.Module):
         outputs_coord = torch.stack(outputs_coords)
 
         out = {'pred_logits': outputs_class[-1], 'pred_boxes': outputs_coord[-1]}
+        out["hs"] = hs
         if self.aux_loss:
             out['aux_outputs'] = self._set_aux_loss(outputs_class, outputs_coord)
 
