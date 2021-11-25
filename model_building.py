@@ -87,11 +87,11 @@ class SynergyNet(nn.Module):
         self.ParamLoss = ParamLoss()
         
         self.loss = {'loss_LMK_f0':0.0,
-                    'loss_LMK_pointNet': 0.0,
+                    # 'loss_LMK_pointNet': 0.0,
                     'loss_Param_In':0.0,
-                    'loss_PointResidual':0.0,
-                    'loss_Param_S2': 0.0,
-                    'loss_Param_S1S2': 0.0,
+                    # 'loss_PointResidual':0.0,
+                    # 'loss_Param_S2': 0.0,
+                    # 'loss_Param_S1S2': 0.0,
                     }
 
         self.register_buffer('param_mean', torch.Tensor(param_pack.param_mean).cuda(non_blocking=True))
@@ -156,6 +156,7 @@ class SynergyNet(nn.Module):
         self.loss['loss_LMK_f0'] = 0.01 *self.LMKLoss_3D(vertex_lmk, vertex_GT_lmk, kp=True)        
         self.loss['loss_Param_In'] = 0.02 * self.ParamLoss(_3D_attr, _3D_attr_GT)
         
+        """
         point_residual = self.forwardDirection(vertex_lmk, avgpool, _3D_attr[:,12:52], _3D_attr[:,52:62])
         vertex_lmk = vertex_lmk + 0.01 * point_residual
         self.loss['loss_LMK_pointNet'] = 0.01 * self.LMKLoss_3D(vertex_lmk, vertex_GT_lmk, kp=True)
@@ -163,6 +164,7 @@ class SynergyNet(nn.Module):
         _3D_attr_S2 = self.reverseDirection(vertex_lmk)
         self.loss['loss_Param_S2'] = 0.02 * self.ParamLoss(_3D_attr_S2, _3D_attr_GT, mode='only_3dmm')
         self.loss['loss_Param_S1S2'] = 1 * self.ParamLoss(_3D_attr_S2, _3D_attr, mode='only_3dmm')
+        """
 
         return self.loss
 
