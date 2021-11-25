@@ -2,9 +2,9 @@ setup.py
 /home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/vision.cpp
 /home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.cpp
 /home/telinwu/courses/cs269_fall22/SynergyNet/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.cu
-/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/vision.cpp
-/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/cpu/ms_deform_attn_cpu.cpp
-/home/telinwu/courses/cs269_fall22/SynergyNet/deformable_detr/ops/src/cuda/ms_deform_attn_cuda.cu
+/home/telinwu/courses/cs269_fall22/SynergyNet/models/ops/src/vision.cpp
+/home/telinwu/courses/cs269_fall22/SynergyNet/models/ops/src/cpu/ms_deform_attn_cpu.cpp
+/home/telinwu/courses/cs269_fall22/SynergyNet/models/ops/src/cuda/ms_deform_attn_cuda.cu
 MultiScaleDeformableAttention.egg-info/PKG-INFO
 MultiScaleDeformableAttention.egg-info/SOURCES.txt
 MultiScaleDeformableAttention.egg-info/dependency_links.txt
