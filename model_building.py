@@ -65,9 +65,9 @@ class I2P(nn.Module):
 
     def forward_test(self, input):
         """ Testing time forward."""
-        print(input.size())
+        # print(input.size())
         _3D_attr, avgpool = self.backbone(input)
-        print(_3D_attr.size(), avgpool.size());raise
+        # print(_3D_attr.size(), avgpool.size());raise
         return _3D_attr, avgpool
 
 # Main model SynergyNet definition

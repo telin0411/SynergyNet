@@ -256,7 +256,8 @@ def benchmark_pipeline(model):
             model=model,
             root=root,
             filelists=filelists,
-            batch_size=128)
+            # batch_size=128)
+            batch_size=16)
 
         s2 = benchmark_aflw2000_params(params, data_param)
         logging.info(s2)

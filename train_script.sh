@@ -8,7 +8,6 @@ LOG_FILE="${LOG_DIR}/`date +'%Y-%m-%d_%H:%M.%S'`.log"
 
 python3 main_train.py --arch="mobilenet_v2" \
     --start-epoch=1 \
-    --snapshot="ckpts/SynergyNet" \
     --param-fp-train='./3dmm_data/param_all_norm_v201.pkl' \
     --warmup=5 \
     --batch-size=900 \
@@ -24,3 +23,6 @@ python3 main_train.py --arch="mobilenet_v2" \
     --test_initial=True \
     --save_val_freq=5 \
     --resume="" \
+    --snapshot="ckpts/DETR_SynergyNet" \
+    --batch-size=16 \
+    # --snapshot="ckpts/SynergyNet" \
