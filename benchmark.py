@@ -232,7 +232,8 @@ def benchmark(checkpoint_fp, args):
             args= args,
             filelists=filelists,
             device_ids=device_ids,
-            batch_size=128)
+            # batch_size=128)
+            batch_size=16)
 
         info_out_fal = benchmark_aflw2000_params(params, data_param)
         print(info_out_fal)
