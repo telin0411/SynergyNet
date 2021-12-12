@@ -2,5 +2,5 @@
 
 
 python3 benchmark.py \
-    -w ckpts/DETR_SynergyNet_checkpoint_epoch_45.pth.tar \
+    -w ckpts/DETR_SynergyNet_checkpoint_epoch_50.pth.tar \
     # -w pretrained/best.pth.tar \
